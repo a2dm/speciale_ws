@@ -1,16 +1,25 @@
 package br.com.a2dm.spdmws.entity;
 
 import java.math.BigInteger;
+import java.util.Date;
 
-public class PedidoProduto
-{
+public class PedidoProduto {
+
 	private BigInteger idPedidoProduto;
-	
+
+	private BigInteger idProduto;
+
 	private BigInteger idPedido;
-	
+
+	private BigInteger idUsuarioCad;
+
 	private String desProduto;
-	
+
 	private Integer qtdSolicitada;
+
+	private Date datCadastro;
+
+	private String flgAtivo;
 
 	public BigInteger getIdPedidoProduto() {
 		return idPedidoProduto;
@@ -42,5 +51,37 @@ public class PedidoProduto
 
 	public void setQtdSolicitada(Integer qtdSolicitada) {
 		this.qtdSolicitada = qtdSolicitada;
+	}
+
+	public Date getDatCadastro() {
+		return datCadastro;
+	}
+
+	public void setDatCadastro(Date datCadastro) {
+		this.datCadastro = datCadastro;
+	}
+
+	public String getFlgAtivo() {
+		return flgAtivo;
+	}
+
+	public void setFlgAtivo(String flgAtivo) {
+		this.flgAtivo = flgAtivo;
+	}
+
+	public BigInteger getIdUsuarioCad() {
+		return idUsuarioCad;
+	}
+
+	public void setIdUsuarioCad(BigInteger idUsuarioCad) {
+		this.idUsuarioCad = idUsuarioCad;
+	}
+
+	public BigInteger getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(BigInteger idProduto) {
+		this.idProduto = idProduto;
 	}
 }

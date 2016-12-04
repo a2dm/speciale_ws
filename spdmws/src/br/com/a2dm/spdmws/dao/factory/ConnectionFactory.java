@@ -8,6 +8,6 @@ public class ConnectionFactory {
 	public static Connection getConnection() throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 
-		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/spdm", "postgres", "postgres");
+		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/spdm_custom", "postgres", "postgres");
 	}
 }

@@ -37,7 +37,7 @@ public class UsuarioDaoImpl implements UsuarioDao
 			Usuario usuario = null;
 			
 			String sql = "select u.nome, u.login, u.id_usuario, u.id_cliente" +
-						 "	from seg.tb_usuario u " +
+						 "	from ped.tb_usuario u " +
 						 " where upper(u.login) = ?  " +
 						 "   and u.senha = ?  " +
 						 "   and upper(u.flg_ativo) = 'S' "+
