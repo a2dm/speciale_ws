@@ -1,35 +1,33 @@
 package br.com.a2dm.spdmws.entity;
 
-import java.math.BigInteger;
 import java.util.Date;
 
-public class Pedido
-{
-	private BigInteger idPedido;
-	
-	private BigInteger idCliente;
-	
+public class Pedido {
+	private Long idPedido;
+
+	private Long idCliente;
+
 	private String desCliente;
-	
+
 	private Date dataPedido;
-	
+
 	private String observacao;
-	
+
 	private String desUsrCad;
 
-	public BigInteger getIdPedido() {
+	public Long getIdPedido() {
 		return idPedido;
 	}
 
-	public void setIdPedido(BigInteger idPedido) {
+	public void setIdPedido(Long idPedido) {
 		this.idPedido = idPedido;
 	}
 
-	public BigInteger getIdCliente() {
+	public Long getIdCliente() {
 		return idCliente;
 	}
 
-	public void setIdCliente(BigInteger idCliente) {
+	public void setIdCliente(Long idCliente) {
 		this.idCliente = idCliente;
 	}
 

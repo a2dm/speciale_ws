@@ -14,6 +14,8 @@ public class PedidoProduto {
 	private BigInteger idUsuarioCad;
 
 	private String desProduto;
+	
+	private String name;
 
 	private Integer qtdSolicitada;
 
@@ -83,5 +85,13 @@ public class PedidoProduto {
 
 	public void setIdProduto(BigInteger idProduto) {
 		this.idProduto = idProduto;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }
