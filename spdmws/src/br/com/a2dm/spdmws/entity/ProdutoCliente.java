@@ -8,7 +8,13 @@ public class ProdutoCliente {
 
 	private String desProduto;
 	
+	private String flgFavorito;
+	
 	private Integer value;
+	
+	private Integer qtdLoteMinimo;
+	
+	private Integer qtdMultiplo;
 
 	public BigInteger getIdProduto() {
 		return idProduto;
@@ -32,5 +38,29 @@ public class ProdutoCliente {
 
 	public void setValue(Integer value) {
 		this.value = value;
+	}
+
+	public String getFlgFavorito() {
+		return flgFavorito;
+	}
+
+	public void setFlgFavorito(String flgFavorito) {
+		this.flgFavorito = flgFavorito;
+	}
+
+	public Integer getQtdLoteMinimo() {
+		return qtdLoteMinimo;
+	}
+
+	public void setQtdLoteMinimo(Integer qtdLoteMinimo) {
+		this.qtdLoteMinimo = qtdLoteMinimo;
+	}
+
+	public Integer getQtdMultiplo() {
+		return qtdMultiplo;
+	}
+
+	public void setQtdMultiplo(Integer qtdMultiplo) {
+		this.qtdMultiplo = qtdMultiplo;
 	}
 }

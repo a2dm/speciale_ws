@@ -18,6 +18,10 @@ public class PedidoProduto {
 	private String name;
 
 	private Integer qtdSolicitada;
+	
+	private Integer qtdLoteMinimo;
+	
+	private Integer qtdMultiplo;
 
 	private Date datCadastro;
 
@@ -93,5 +97,21 @@ public class PedidoProduto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getQtdLoteMinimo() {
+		return qtdLoteMinimo;
+	}
+
+	public void setQtdLoteMinimo(Integer qtdLoteMinimo) {
+		this.qtdLoteMinimo = qtdLoteMinimo;
+	}
+
+	public Integer getQtdMultiplo() {
+		return qtdMultiplo;
+	}
+
+	public void setQtdMultiplo(Integer qtdMultiplo) {
+		this.qtdMultiplo = qtdMultiplo;
 	}
 }

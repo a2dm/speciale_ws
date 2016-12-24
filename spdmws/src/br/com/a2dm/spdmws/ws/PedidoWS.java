@@ -18,6 +18,7 @@ import br.com.a2dm.spdmws.dao.impl.PedidoDaoImpl;
 import br.com.a2dm.spdmws.entity.Mensagem;
 import br.com.a2dm.spdmws.entity.Pedido;
 import br.com.a2dm.spdmws.entity.PedidoCompleto;
+import br.com.a2dm.spdmws.entity.Produto;
 import br.com.a2dm.spdmws.entity.ProdutoCliente;
 import br.com.a2dm.spdmws.entity.ProdutoParam;
 
@@ -63,13 +64,13 @@ public class PedidoWS
 	@POST
 	@Path("/getProduct")	
 	@Produces(MediaType.APPLICATION_JSON)
-	public ProdutoCliente getProduto(@FormParam("idProduto") Long idProduto)
+	public ProdutoCliente getProduto(@FormParam("idProduto") Long idProduto, @FormParam("idCliente") Long idCliente)
 	{
 		ProdutoCliente produtoCliente = null;
 		
 		try
 		{
-			produtoCliente = PedidoDaoImpl.getInstancia().getProduto(idProduto);
+			produtoCliente = PedidoDaoImpl.getInstancia().getProduto(idProduto, idCliente);
 		}
 		catch (Exception ex)
 		{
@@ -294,5 +295,58 @@ public class PedidoWS
 			throw ex;
 		}
 		return mensagem;
+	}
+	
+	@POST
+	@Path("/adicionarFavorito")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Long adicionarFavorito(@FormParam("idCliente") Long idCliente,
+			                        @FormParam("idProduto") Long idProduto,
+			                        @FormParam("idUsuario") Long idUsuario) throws Exception
+	{
+		try
+		{
+			idProduto = PedidoDaoImpl.getInstancia().processFavorito(idCliente, idProduto, idUsuario, "S");
+		}
+		catch (Exception ex)
+		{
+			throw ex;
+		}
+		return idProduto;
+	}
+	
+	@POST
+	@Path("/excluirFavorito")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Long excluirFavorito(@FormParam("idCliente") Long idCliente,
+			                    @FormParam("idProduto") Long idProduto,
+			                    @FormParam("idUsuario") Long idUsuario) throws Exception
+	{
+		try
+		{
+			idProduto = PedidoDaoImpl.getInstancia().processFavorito(idCliente, idProduto, idUsuario, "N");
+		}
+		catch (Exception ex)
+		{
+			throw ex;
+		}
+		return idProduto;
+	}
+	
+	@POST
+	@Path("/listarFavoritoByCliente")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Produto> listarFavoritoByCliente(@FormParam("idCliente") Long idCliente) throws Exception
+	{
+		List<Produto> listFavorito = null;
+		try
+		{
+			listFavorito = PedidoDaoImpl.getInstancia().listarFavoritoByCliente(idCliente);
+		}
+		catch (Exception ex)
+		{
+			throw ex;
+		}
+		return listFavorito;
 	}
 }

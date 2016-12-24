@@ -25,6 +25,10 @@ public class ProdutoParam {
 	private Boolean flgAtivo;
 
 	private Long idPedido;
+	
+	private Integer qtdLoteMinimo;
+	
+	private Integer qtdMultiplo;
 
 	public Long getId() {
 		return id;
@@ -112,5 +116,21 @@ public class ProdutoParam {
 
 	public void setQtdSolicitada(Integer qtdSolicitada) {
 		this.qtdSolicitada = qtdSolicitada;
+	}
+
+	public Integer getQtdLoteMinimo() {
+		return qtdLoteMinimo;
+	}
+
+	public void setQtdLoteMinimo(Integer qtdLoteMinimo) {
+		this.qtdLoteMinimo = qtdLoteMinimo;
+	}
+
+	public Integer getQtdMultiplo() {
+		return qtdMultiplo;
+	}
+
+	public void setQtdMultiplo(Integer qtdMultiplo) {
+		this.qtdMultiplo = qtdMultiplo;
 	}
 }

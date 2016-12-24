@@ -13,6 +13,8 @@ public class Usuario
 	private String senha;
 	
 	private BigInteger idCliente;
+	
+	private String nomeCliente;
 
 	public BigInteger getIdUsuario() {
 		return idUsuario;
@@ -52,5 +54,13 @@ public class Usuario
 
 	public void setIdCliente(BigInteger idCliente) {
 		this.idCliente = idCliente;
+	}
+
+	public String getNomeCliente() {
+		return nomeCliente;
+	}
+
+	public void setNomeCliente(String nomeCliente) {
+		this.nomeCliente = nomeCliente;
 	}
 }

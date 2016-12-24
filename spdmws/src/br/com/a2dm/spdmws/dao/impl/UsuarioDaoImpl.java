@@ -36,8 +36,9 @@ public class UsuarioDaoImpl implements UsuarioDao
 			
 			Usuario usuario = null;
 			
-			String sql = "select u.nome, u.login, u.id_usuario, u.id_cliente" +
+			String sql = "select u.nome, u.login, u.id_usuario, u.id_cliente, des_cliente" +
 						 "	from ped.tb_usuario u " +
+					     "inner join ped.tb_cliente c on u.id_cliente = c.id_cliente  " +
 						 " where upper(u.login) = ?  " +
 						 "   and u.senha = ?  " +
 						 "   and upper(u.flg_ativo) = 'S' "+
@@ -58,6 +59,7 @@ public class UsuarioDaoImpl implements UsuarioDao
 				usuario.setLogin(rs.getString(2));
 				usuario.setIdUsuario(new BigInteger(rs.getString(3)));
 				usuario.setIdCliente(new BigInteger(rs.getString(4)));
+				usuario.setNomeCliente(rs.getString(5));
 			}
 			
 			return usuario;

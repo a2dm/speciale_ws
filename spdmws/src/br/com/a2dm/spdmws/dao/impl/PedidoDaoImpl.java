@@ -58,7 +58,7 @@ public class PedidoDaoImpl implements PedidoDao
 			
 			String sql = " SELECT p.id_pedido, p.id_cliente, c.des_cliente, p.dat_pedido, p.obs_pedido,      "
 					+ "    	  u.nome, pp.id_pedido_produto, pp.id_pedido, pd.des_produto, pp.qtd_solicitada, "
-					+ "       pd.id_produto                                                                   "                                                      
+					+ "       pd.id_produto, pd.qtd_lot_minimo, pd.qtd_multiplo 				             "                                                      
 					+ " FROM ped.tb_pedido p												                 "
 					+ " INNER JOIN ped.tb_pedido_produto pp on p.id_pedido = pp.id_pedido                    "
 					+ " INNER JOIN ped.tb_cliente c on c.id_cliente = p.id_cliente                           "
@@ -114,6 +114,8 @@ public class PedidoDaoImpl implements PedidoDao
 				pedidoProduto.setName(pedidoProduto.getDesProduto());
 				pedidoProduto.setQtdSolicitada(rs.getInt(10));
 				pedidoProduto.setIdProduto(new BigInteger(rs.getString(11)));
+				pedidoProduto.setQtdLoteMinimo(new Integer(rs.getString(12)));
+				pedidoProduto.setQtdMultiplo(new Integer(rs.getString(13)));
 				
 				pedidoCompleto.getListaPedidoProduto().add(pedidoProduto);
 			}
@@ -188,7 +190,7 @@ public class PedidoDaoImpl implements PedidoDao
 		{
 			List<ProdutoCliente> listaProdutoCliente = new ArrayList<>();
 			
-			String sql = " SELECT cp.id_produto, p.des_produto                         "
+			String sql = " SELECT cp.id_produto, p.des_produto, cp.flg_favorito, p.qtd_lot_minimo, p.qtd_multiplo "
 					   + " FROM ped.tb_cliente_produto cp                              "
 					   + " INNER JOIN ped.tb_produto p on cp.id_produto = p.id_produto "
 					   + " WHERE cp.id_cliente = ?                                     "
@@ -205,6 +207,9 @@ public class PedidoDaoImpl implements PedidoDao
 				ProdutoCliente produtoCliente = new ProdutoCliente();
 				produtoCliente.setIdProduto(new BigInteger(rs.getString(1)));
 				produtoCliente.setDesProduto(rs.getString(2));
+				produtoCliente.setFlgFavorito(rs.getString(3));
+				produtoCliente.setQtdLoteMinimo(new Integer(rs.getString(4)));
+				produtoCliente.setQtdMultiplo(new Integer(rs.getString(5)));
 				
 				listaProdutoCliente.add(produtoCliente);
 			}
@@ -248,13 +253,6 @@ public class PedidoDaoImpl implements PedidoDao
 		inserirPedidoProduto(idPedido, idUsuario, listaProdutosAdicionados, conexao);
 	}
 	
-	private Long verificarAlteracao(List<ProdutoParam> listaProdutosAdicionados) {
-		if (listaProdutosAdicionados != null && listaProdutosAdicionados.size() > 0) {
-			return listaProdutosAdicionados.get(0).getIdPedido();
-		}
-		return null;
-	}
-
 	private void inserirPedido(Long idCliente, Long idUsuario, Date data, String observacao, Long idPedido, Connection conexao) throws SQLException 
 	{
 		String sqlInsertPedido = " INSERT INTO ped.tb_pedido(id_pedido,      "
@@ -393,16 +391,19 @@ public class PedidoDaoImpl implements PedidoDao
 		return 0L;
 	}
 
-	public ProdutoCliente getProduto(Long idProduto) throws Exception {
+	public ProdutoCliente getProduto(Long idProduto, Long idCliente) throws Exception {
 		try (Connection conexao = ConnectionFactory.getConnection())
 		{
 			ProdutoCliente produtoCliente = new ProdutoCliente();
-			String sql = " SELECT p.id_produto, p.des_produto "
+			String sql = " SELECT p.id_produto, p.des_produto, cp.flg_favorito, p.qtd_lot_minimo, p.qtd_multiplo "
 					   + " FROM ped.tb_produto p              "
-					   + " WHERE p.id_produto = ?             ";
+					   + " INNER JOIN ped.tb_cliente_produto cp on cp.id_produto = p.id_produto "
+					   + " WHERE p.id_produto = ?             "
+					   + "   AND cp.id_cliente = ?             ";
 			
 			PreparedStatement pst = conexao.prepareStatement(sql);
 			pst.setLong(1, idProduto.longValue());
+			pst.setLong(2, idCliente.longValue());
 			
 			ResultSet rs = pst.executeQuery();
 			
@@ -410,6 +411,9 @@ public class PedidoDaoImpl implements PedidoDao
 			{	
 				produtoCliente.setIdProduto(new BigInteger(rs.getString(1)));
 				produtoCliente.setDesProduto(rs.getString(2));
+				produtoCliente.setFlgFavorito(rs.getString(3));
+				produtoCliente.setQtdLoteMinimo(new Integer(rs.getString(4)));
+				produtoCliente.setQtdMultiplo(new Integer(rs.getString(5)));
 			}
 			return produtoCliente;
 		}
@@ -673,5 +677,74 @@ public class PedidoDaoImpl implements PedidoDao
 		pedidoCompleto.getPedido().setObservacao("");
 		pedidoCompleto.setListaPedidoProduto(new ArrayList<>());
 		return pedidoCompleto;
+	}
+
+	public Long processFavorito(Long idCliente, Long idProduto, Long idUsuario, String flgFavorito) throws Exception {
+		try (Connection conexao = ConnectionFactory.getConnection())
+		{
+			java.util.Date utilDate = new java.util.Date();
+			
+			String sql = " UPDATE ped.tb_cliente_produto SET id_usuario_alt = ?, "
+					   + "                                   dat_alteracao = ?,  "
+					   + "                                   flg_favorito = ?    "
+					   + " WHERE id_cliente = ?                         "
+					   + "   AND id_produto = ?                         ";
+			
+			PreparedStatement pst = conexao.prepareStatement(sql);
+			pst.setLong(1, idUsuario);
+			pst.setDate(2, new java.sql.Date(utilDate.getTime()));
+			pst.setString(3, flgFavorito);
+			pst.setLong(4, idCliente);
+			pst.setLong(5, idProduto);
+			
+			pst.executeUpdate();
+			return idProduto;
+		}
+		catch (Exception ex)
+		{
+			throw ex;
+		}
+	}
+	
+	public List<Produto> listarFavoritoByCliente(Long idCliente) throws Exception {
+		
+		try (Connection conexao = ConnectionFactory.getConnection())
+		{
+			List<Produto> listFavorito = new ArrayList<>();
+			
+			String sql = " SELECT p.id_produto, p.des_produto                          "
+					   + " FROM ped.tb_cliente_produto cp                              "
+					   + " INNER JOIN ped.tb_produto p on p.id_produto = cp.id_produto "
+					   + " WHERE p.flg_ativo = 'S'                                     " 
+					   + "   AND cp.flg_ativo = 'S'                                    "
+					   + "   AND cp.flg_favorito = 'S'                                 ";
+			
+			if (idCliente != null) {
+				sql += " AND cp.id_cliente = ? ";
+			}
+			
+			PreparedStatement pst = conexao.prepareStatement(sql);
+			
+			if (idCliente != null) 
+			{
+				pst.setLong(1, idCliente);
+			}
+			
+			ResultSet rs = pst.executeQuery();
+			
+			while (rs.next())
+			{
+				Produto produto = new Produto();
+				produto.setIdProduto(new Long(rs.getString(1)));
+				produto.setDesProduto(rs.getString(2));
+				
+				listFavorito.add(produto);
+			}
+			return listFavorito;
+		}
+		catch (Exception ex)
+		{
+			throw ex;
+		}
 	}
 }
