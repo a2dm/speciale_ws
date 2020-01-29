@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.FormParam;
@@ -12,12 +13,25 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import br.com.a2dm.spdm.entity.ClienteProduto;
 import br.com.a2dm.spdm.entity.Pedido;
+import br.com.a2dm.spdm.entity.PedidoProduto;
+import br.com.a2dm.spdm.entity.Produto;
+import br.com.a2dm.spdm.exception.ServiceException;
 import br.com.a2dm.spdm.service.ClienteProdutoService;
+import br.com.a2dm.spdm.service.PedidoProdutoService;
 import br.com.a2dm.spdm.service.PedidoService;
+import br.com.a2dm.spdm.service.ProdutoService;
 import br.com.a2dm.spdmws.entity.PedidoCompleto;
 import br.com.a2dm.spdmws.entity.ProdutoCliente;
+import br.com.a2dm.spdmws.utils.JsonUtils;
 
 @Path("/PedidoWS")
 public class PedidoWS
@@ -26,7 +40,7 @@ public class PedidoWS
 	@POST
 	@Path("/getPedido")	
 	@Produces(MediaType.APPLICATION_JSON)
-	public PedidoCompleto getPedido(@FormParam("idCliente") BigInteger idCliente, @FormParam("dataPedido") Date dataPedido)
+	public PedidoCompleto getPedido(@FormParam("idCliente") BigInteger idCliente, @FormParam("dataPedido") Date dataPedido) throws ServiceException 
 	{
 		PedidoCompleto pedidoCompleto = new PedidoCompleto();
 		
@@ -34,50 +48,30 @@ public class PedidoWS
 		{
 			Pedido pedido = new Pedido();
 			pedido.setIdCliente(idCliente);
-			pedido.setDataPedido(dataPedido);
-			pedido = PedidoService.getInstancia().get(pedido, PedidoService.JOIN_PEDIDO_PRODUTO);
+			pedido.setDatPedido(dataPedido);
+			pedido.setFlgAtivo("S");
+			pedido = PedidoService.getInstancia().get(pedido, 0);
 			
 			pedidoCompleto.setPedido(pedido);
 			pedidoCompleto.getPedido().setObservacao(pedido.getObservacao());
-			pedidoCompleto.getPedido().setDataPedido(pedido.getDatPedido());
-			pedidoCompleto.setListaPedidoProduto(pedido.getListaPedidoProduto());
-		}
-		catch (Exception ex)
-		{
 			
-		}
-		return pedidoCompleto;
-	}
-	
-	@POST
-	@Path("/getPedidoById")	
-	@Produces(MediaType.APPLICATION_JSON)
-	public PedidoCompleto getPedidoById(@FormParam("idPedido") BigInteger idPedido)
-	{
-		PedidoCompleto pedidoCompleto = new PedidoCompleto();
-		
-		try
-		{
-			Pedido pedido = new Pedido();
-			pedido.setIdPedido(idPedido);
-			pedido = PedidoService.getInstancia().get(pedido, PedidoService.JOIN_PEDIDO_PRODUTO);
+			PedidoProduto pedidoProduto = new PedidoProduto();
+			pedidoProduto.setIdPedido(pedido.getIdPedido());
+			pedidoProduto.setFlgAtivo("S");
 			
-			pedidoCompleto.setPedido(pedido);
-			pedidoCompleto.getPedido().setObservacao(pedido.getObservacao());
-			pedidoCompleto.getPedido().setDataPedido(pedido.getDatPedido());
-			pedidoCompleto.setListaPedidoProduto(pedido.getListaPedidoProduto());
-		}
-		catch (Exception ex)
-		{
+			List<PedidoProduto> listaPedidoProduto = PedidoProdutoService.getInstancia().pesquisar(pedidoProduto, PedidoProdutoService.JOIN_PRODUTO);
+			pedidoCompleto.setListaPedidoProduto(listaPedidoProduto);
 			
+			return JsonUtils.serializeInstance(pedidoCompleto);
+		} catch (Exception e) {
+			throw new ServiceException(e.getMessage());
 		}
-		return pedidoCompleto;
 	}
 	
 	@POST
 	@Path("/getProduct")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ProdutoCliente getProduto(@FormParam("idProduto") BigInteger idProduto, @FormParam("idCliente") BigInteger idCliente)
+	public ProdutoCliente getProduto(@FormParam("idProduto") BigInteger idProduto, @FormParam("idCliente") BigInteger idCliente) throws ServiceException
 	{
 		ProdutoCliente produtoCliente = new ProdutoCliente();
 		
@@ -86,6 +80,7 @@ public class PedidoWS
 			ClienteProduto clienteProduto = new ClienteProduto();
 			clienteProduto.setIdCliente(idCliente);
 			clienteProduto.setIdProduto(idProduto);
+			clienteProduto.setFlgAtivo("S");
 			
 			clienteProduto = ClienteProdutoService.getInstancia().get(clienteProduto, ClienteProdutoService.JOIN_PRODUTO);
 			
@@ -94,184 +89,152 @@ public class PedidoWS
 			produtoCliente.setQtdLoteMinimo(clienteProduto.getProduto().getQtdLoteMinimo());
 			produtoCliente.setQtdMultiplo(clienteProduto.getProduto().getQtdMultiplo());
 			produtoCliente.setFlgFavorito(clienteProduto.getFlgfavorito());
-		}
-		catch (Exception ex)
-		{
 			
+			return JsonUtils.serializeInstance(produtoCliente);
+		} catch (Exception e) {
+			throw new ServiceException(e.getMessage());
 		}
-		return produtoCliente;
 	}
 	
 	@POST
 	@Path("/getListaProdutoByCliente")	
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<ProdutoCliente> getListaProdutoByCliente(@FormParam("idCliente") BigInteger idCliente)
+	public List<ProdutoCliente> getListaProdutoByCliente(@FormParam("idCliente") BigInteger idCliente) throws ServiceException
 	{
 		List<ProdutoCliente> listaProdutoCliente = new ArrayList<>();
 		
 		try
 		{
-			ClienteProduto clienteProduto = new ClienteProduto();
-			clienteProduto.setIdCliente(idCliente);
+			Produto produto = new Produto();
+			produto.setFlgAtivo("S");
+			produto.setFiltroMap(new HashMap<String, Object>());
+			produto.getFiltroMap().put("flgAtivoClienteProduto", "S");
+			produto.getFiltroMap().put("idCliente", idCliente);
 			
-			List<ClienteProduto> list = ClienteProdutoService.getInstancia().pesquisar(clienteProduto, ClienteProdutoService.JOIN_PRODUTO);
+			List<Produto> list = ProdutoService.getInstancia().pesquisar(produto, ProdutoService.JOIN_CLIENTE_PRODUTO);
 			
 			if (list != null && list.size() > 0) {
-				for (ClienteProduto element : list) {
+				for (Produto element : list) {
 					ProdutoCliente produtoCliente = new ProdutoCliente();
-					produtoCliente.setIdProduto(element.getProduto().getIdProduto());
-					produtoCliente.setDesProduto(element.getProduto().getDesProduto());
-					produtoCliente.setQtdLoteMinimo(element.getProduto().getQtdLoteMinimo());
-					produtoCliente.setQtdMultiplo(element.getProduto().getQtdMultiplo());
-					produtoCliente.setFlgFavorito(element.getFlgfavorito());
+					produtoCliente.setIdProduto(element.getIdProduto());
+					produtoCliente.setDesProduto(element.getDesProduto());
+					produtoCliente.setQtdLoteMinimo(element.getQtdLoteMinimo());
+					produtoCliente.setQtdMultiplo(element.getQtdMultiplo());
 					
 					listaProdutoCliente.add(produtoCliente);
 				}
 			}
+			return JsonUtils.serializeInstance(listaProdutoCliente);
+		} catch (Exception e) {
+			throw new ServiceException(e.getMessage());
 		}
-		catch (Exception ex)
-		{
-			
-		}
-		return listaProdutoCliente;
 	}
 	
 	@POST
-	@Path("/preparaAlterarUltimoPedido")	
+	@Path("/cadastrar")	
 	@Produces(MediaType.APPLICATION_JSON)
-	public PedidoCompleto preparaAlterarUltimoPedido(@FormParam("idCliente") BigInteger idCliente) throws Exception
+	public BigInteger cadastrar(@FormParam("idCliente") BigInteger idCliente,
+						  @FormParam("idUsuario") BigInteger idUsuario,
+						  @FormParam("idPedido") BigInteger idPedido,
+                          @FormParam("data") Date data, 
+                          @FormParam("observacao") String observacao,
+                          @FormParam("produtosAdicionadosJson") String produtosAdicionadosJson,
+                          @FormParam("produtosRemovidosJson") String produtosRemovidosJson) throws JsonParseException, JsonMappingException, IOException, JSONException, ServiceException
 	{
-		PedidoCompleto pedidoCompleto = new PedidoCompleto();
+		JSONObject obj = new JSONObject(produtosAdicionadosJson);
+		JSONArray listaProdutosAdicionados = obj.getJSONArray("data");
+		
+		JSONObject objRemovido = new JSONObject(produtosRemovidosJson);
+		JSONArray listaProdutosRemovidos= objRemovido.getJSONArray("data");
+		
 		try
 		{
 			Pedido pedido = new Pedido();
 			pedido.setIdCliente(idCliente);
+			pedido.setObsPedido(observacao);
+			pedido.setDatPedido(data);
+			pedido.setFlgAtivo("S");
+			pedido.setPlataforma(PedidoService.PLATAFORMA_APP);
 			
-			List<Pedido> pedidos = PedidoService.getInstancia().pesquisar(pedido, PedidoService.JOIN_PEDIDO_PRODUTO);
-			
-			if (pedidos != null && pedidos.size() > 0) {
-				Pedido ultimoPedido = pedidos.get(pedidos.size()-1);
-				pedidoCompleto.setPedido(ultimoPedido);
-				pedidoCompleto.getPedido().setObservacao(ultimoPedido.getObservacao());
-				pedidoCompleto.getPedido().setDataPedido(ultimoPedido.getDatPedido());
-				pedidoCompleto.setListaPedidoProduto(ultimoPedido.getListaPedidoProduto());
+			if (listaProdutosAdicionados != null 
+					&& listaProdutosAdicionados.length() > 0) {
+				
+				pedido.setListaProduto(new ArrayList<>());
+				
+				for (int i = 0; i < listaProdutosAdicionados.length(); i++) {
+					JSONObject o = listaProdutosAdicionados.getJSONObject(i);
+					
+					Produto produto = new Produto();
+					produto.setIdProduto(new BigInteger(o.getString("idProduto")));
+					produto.setQtdSolicitada(new BigInteger(o.getString("quantity")));
+					
+					if (!o.isNull("flgAtivo")) {
+						produto.setFlgAtivo(o.getString("flgAtivo"));
+					}
+					
+					pedido.getListaProduto().add(produto);
+				}
+				
+				for (int i = 0; i < listaProdutosRemovidos.length(); i++) {
+					JSONObject o = listaProdutosRemovidos.getJSONObject(i);
+					
+					Produto produto = new Produto();
+					produto.setIdProduto(new BigInteger(o.getString("idProduto")));
+					produto.setQtdSolicitada(new BigInteger(o.getString("quantity")));
+					
+					if (!o.isNull("flgAtivo")) {
+						produto.setFlgAtivo(o.getString("flgAtivo"));
+					}
+					
+					pedido.getListaProduto().add(produto);
+				}
 			}
 			
-		}
-		catch (Exception ex)
-		{
-			throw ex;
-		}
-		return pedidoCompleto;
-	}
-	
-	@POST
-	@Path("/inativarUltimoPedido")	
-	@Produces(MediaType.APPLICATION_JSON)
-	public PedidoCompleto inativarUltimoPedido(@FormParam("idUsuario") BigInteger idUsuario, 
-			                         		  @FormParam("idCliente") BigInteger idCliente) throws Exception
-	{
-		PedidoCompleto pedidoCompleto = new PedidoCompleto();
-		try
-		{
-			Pedido pedido = new Pedido();
-			pedido.setIdCliente(idCliente);
-			
-			List<Pedido> pedidos = PedidoService.getInstancia().pesquisar(pedido, 0);
-			
-			if (pedidos != null && pedidos.size() > 0) {
-				Pedido ultimoPedido = pedidos.get(pedidos.size()-1);
-				
-				Pedido pedidoInativar = new Pedido();
-				pedido.setIdPedido(ultimoPedido.getIdPedido());
+			if (idPedido != null && idPedido.longValue() > 0) {
+				pedido.setIdPedido(idPedido);
+				pedido.setDatAlteracao(new Date());
 				pedido.setIdUsuarioAlt(idUsuario);
 				
-				PedidoService.getInstancia().inativar(pedidoInativar);
+				Pedido pedidoAlterado = PedidoService.getInstancia().alterar(pedido);
+				
+				idPedido = pedidoAlterado.getIdPedido();
+			} else {
+				pedido.setIdPedido(null);
+				pedido.setDatCadastro(new Date());
+				pedido.setIdUsuarioCad(idUsuario);
+				
+				Pedido pedidoInserido = PedidoService.getInstancia().inserir(pedido);
+				
+				idPedido = pedidoInserido.getIdPedido();
 			}
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			throw ex;
+			throw new ServiceException(e.getMessage());
 		}
-		return pedidoCompleto;
+		return idPedido;
 	}
 	
-//	@POST
-//	@Path("/cadastrar")	
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public BigInteger cadastrar(@FormParam("idCliente") BigInteger idCliente,
-//						  @FormParam("idUsuario") BigInteger idUsuario,
-//						  @FormParam("idPedido") BigInteger idPedido,
-//                          @FormParam("data") Date data, 
-//                          @FormParam("observacao") String observacao,
-//                          @FormParam("produtosAdicionadosJson") String produtosAdicionadosJson) throws JsonParseException, JsonMappingException, IOException
-//	{
-//		ObjectMapper mapper = new ObjectMapper();
-//		List<ProdutoParam> listaProdutosAdicionados = mapper.readValue(produtosAdicionadosJson, mapper.getTypeFactory().constructCollectionType(List.class, ProdutoParam.class));
-//		
-//		try
-//		{
-//			Pedido pedido = new Pedido();
-//			pedido.setIdCliente(idCliente);
-//			pedido.setObsPedido(observacao);
-//			
-//			if (listaProdutosAdicionados != null 
-//					&& listaProdutosAdicionados.size() > 0) {
-//				
-//				pedido.setListaProduto(new ArrayList<>());
-//				
-//				for (ProdutoParam element : listaProdutosAdicionados) {
-//					Produto produto = new Produto();
-//					produto.setIdProduto(element.getIdProduto());
-//					produto.setQtdSolicitada(element.getQuantity());
-//					
-//					pedido.getListaProduto().add(produto);
-//				}
-//			}
-//			
-//			if (idPedido != null) {
-//				pedido.setIdUsuarioAlt(idUsuario);
-//				pedido.setDatAlteracao(data);
-//				pedido.setIdPedido(idPedido);
-//				
-//				Pedido pedidoAlterado = PedidoService.getInstancia().alterar(pedido);
-//				
-//				idPedido = pedidoAlterado.getIdPedido();
-//			} else {
-//				pedido.setIdUsuarioCad(idUsuario);
-//				pedido.setDatCadastro(data);
-//				
-//				Pedido pedidoInserido = PedidoService.getInstancia().inserir(pedido);
-//				
-//				idPedido = pedidoInserido.getIdPedido();
-//			}
-//		}
-//		catch (Exception ex)
-//		{
-//			
-//		}
-//		return idPedido;
-//	}
-	
 	@POST
-	@Path("/inativar")	
+	@Path("/inativarPedido")	
 	@Produces(MediaType.APPLICATION_JSON)
-	public BigInteger inativar(@FormParam("idPedido") BigInteger idPedido,
-						 @FormParam("idUsuario") BigInteger idUsuario) throws IOException
+	public Pedido inativarPedido(@FormParam("idPedido") BigInteger idPedido, 
+			                         @FormParam("idUsuario") BigInteger idUsuario,
+			                         @FormParam("idCliente") BigInteger idCliente) throws ServiceException
 	{
 		try
 		{
 			Pedido pedido = new Pedido();
 			pedido.setIdPedido(idPedido);
 			pedido.setIdUsuarioAlt(idUsuario);
+			pedido.setIdCliente(idCliente);
 			
-			PedidoService.getInstancia().inativar(pedido);
-		}
-		catch (Exception ex)
-		{
+			pedido = PedidoService.getInstancia().inativar(pedido);
 			
+			return JsonUtils.serializeInstance(pedido);
+		} catch (Exception e) {
+			throw new ServiceException(e.getMessage());
 		}
-		return idPedido;
 	}
 	
 	@POST
@@ -287,30 +250,6 @@ public class PedidoWS
 			pedidoCompleto.getPedido().setDataPedido(new Date());
 			pedidoCompleto.getPedido().setObservacao("");
 			pedidoCompleto.setListaPedidoProduto(new ArrayList<>());
-		}
-		catch (Exception ex)
-		{
-			throw ex;
-		}
-		return pedidoCompleto;
-	}
-	
-	@POST
-	@Path("/preparaAlterarPedido")	
-	@Produces(MediaType.APPLICATION_JSON)
-	public PedidoCompleto preparaAlterarPedido(@FormParam("idPedido") BigInteger idPedido) throws Exception
-	{
-		PedidoCompleto pedidoCompleto = new PedidoCompleto();
-		try
-		{
-			Pedido pedido = new Pedido();
-			pedido.setIdPedido(idPedido);
-			pedido = PedidoService.getInstancia().get(pedido, PedidoService.JOIN_PEDIDO_PRODUTO);
-			
-			pedidoCompleto.setPedido(pedido);
-			pedidoCompleto.getPedido().setObservacao(pedido.getObservacao());
-			pedidoCompleto.getPedido().setDataPedido(pedido.getDatPedido());
-			pedidoCompleto.setListaPedidoProduto(pedido.getListaPedidoProduto());
 		}
 		catch (Exception ex)
 		{
