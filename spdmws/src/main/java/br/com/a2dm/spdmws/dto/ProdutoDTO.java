@@ -1,20 +1,24 @@
-package br.com.a2dm.spdmws.entity;
+package br.com.a2dm.spdmws.dto;
 
 import java.math.BigInteger;
 
-public class ProdutoCliente {
+public class ProdutoDTO {
 
+	private BigInteger idPedidoProduto;
 	private BigInteger idProduto;
-
 	private String desProduto;
-	
-	private String flgFavorito;
-	
-	private Integer value;
-	
 	private BigInteger qtdLoteMinimo;
-	
 	private BigInteger qtdMultiplo;
+	private BigInteger qtdSolicitada;
+	private String flgAtivo;
+	
+	public BigInteger getIdPedidoProduto() {
+		return idPedidoProduto;
+	}
+	
+	public void setIdPedidoProduto(BigInteger idPedidoProduto) {
+		this.idPedidoProduto = idPedidoProduto;
+	}
 
 	public BigInteger getIdProduto() {
 		return idProduto;
@@ -32,22 +36,6 @@ public class ProdutoCliente {
 		this.desProduto = desProduto;
 	}
 
-	public Integer getValue() {
-		return value;
-	}
-
-	public void setValue(Integer value) {
-		this.value = value;
-	}
-
-	public String getFlgFavorito() {
-		return flgFavorito;
-	}
-
-	public void setFlgFavorito(String flgFavorito) {
-		this.flgFavorito = flgFavorito;
-	}
-
 	public BigInteger getQtdLoteMinimo() {
 		return qtdLoteMinimo;
 	}
@@ -63,4 +51,21 @@ public class ProdutoCliente {
 	public void setQtdMultiplo(BigInteger qtdMultiplo) {
 		this.qtdMultiplo = qtdMultiplo;
 	}
+
+	public BigInteger getQtdSolicitada() {
+		return qtdSolicitada;
+	}
+
+	public void setQtdSolicitada(BigInteger qtdSolicitada) {
+		this.qtdSolicitada = qtdSolicitada;
+	}
+
+	public String getFlgAtivo() {
+		return flgAtivo;
+	}
+
+	public void setFlgAtivo(String flgAtivo) {
+		this.flgAtivo = flgAtivo;
+	}
+
 }
