@@ -21,11 +21,13 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import br.com.a2dm.spdm.entity.ClienteProduto;
+import br.com.a2dm.spdm.entity.OpcaoEntrega;
 import br.com.a2dm.spdm.entity.Pedido;
 import br.com.a2dm.spdm.entity.PedidoProduto;
 import br.com.a2dm.spdm.entity.Produto;
 import br.com.a2dm.spdm.exception.ServiceException;
 import br.com.a2dm.spdm.service.ClienteProdutoService;
+import br.com.a2dm.spdm.service.OpcaoEntregaService;
 import br.com.a2dm.spdm.service.PedidoProdutoService;
 import br.com.a2dm.spdm.service.PedidoService;
 import br.com.a2dm.spdm.service.ProdutoService;
@@ -256,5 +258,33 @@ public class PedidoWS
 			throw ex;
 		}
 		return pedidoCompleto;
+	}
+	
+	@POST
+	@Path("/listarOpcaoEntrega")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<OpcaoEntrega> listarOpcaoFrete() throws ServiceException
+	{
+		try
+		{
+			List<OpcaoEntrega> listOpcaoEntrega = OpcaoEntregaService.getInstancia().pesquisar(new OpcaoEntrega(), 0); 
+			return JsonUtils.serializeInstance(listOpcaoEntrega);
+		} catch (Exception e) {
+			throw new ServiceException(e.getMessage());
+		}
+	}
+	
+	@POST
+	@Path("/buscarValorFrete")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Double buscarInformacoesOpcaoEntrega(@FormParam("idCliente") BigInteger idCliente, @FormParam("idOpcaoEntrega") BigInteger idOpcaoEntrega) throws ServiceException
+	{
+		try
+		{
+			String valorFreteFormatado = PedidoService.getInstancia().buscarInformacoesOpcaoEntrega(idCliente, idOpcaoEntrega); 
+			return new Double(valorFreteFormatado.toString().replace(".", "").replace(",", "."));
+		} catch (Exception e) {
+			throw new ServiceException(e.getMessage());
+		}
 	}
 }
