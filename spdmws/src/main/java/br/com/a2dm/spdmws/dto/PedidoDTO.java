@@ -9,6 +9,7 @@ public class PedidoDTO {
 	private BigInteger idCliente;
 	private BigInteger idUsuario;
 	private BigInteger idPedido;
+	private BigInteger idOpcaoEntrega;
 	private Date dataPedido;
 	private String observacao;
 	private String flgAtivo;
@@ -79,4 +80,11 @@ public class PedidoDTO {
 		this.usuarioCadastro = usuarioCadastro;
 	}
 
+	public BigInteger getIdOpcaoEntrega() {
+		return idOpcaoEntrega;
+	}
+
+	public void setIdOpcaoEntrega(BigInteger idOpcaoEntrega) {
+		this.idOpcaoEntrega = idOpcaoEntrega;
+	}
 }

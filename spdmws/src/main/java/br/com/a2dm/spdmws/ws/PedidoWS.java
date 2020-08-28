@@ -65,6 +65,7 @@ public class PedidoWS {
 			pedido.setIdCliente(pedidoDTO.getIdCliente());
 			pedido.setObsPedido(pedidoDTO.getObservacao());
 			pedido.setDatPedido(pedidoDTO.getDataPedido());
+			pedido.setIdOpcaoEntrega(pedidoDTO.getIdOpcaoEntrega());
 			pedido.setFlgAtivo("S");
 			pedido.setPlataforma(PedidoService.PLATAFORMA_APP);
 
@@ -112,6 +113,7 @@ public class PedidoWS {
 			pedido.setIdCliente(pedidoDTO.getIdCliente());
 			pedido.setObsPedido(pedidoDTO.getObservacao());
 			pedido.setDatPedido(pedidoDTO.getDataPedido());
+			pedido.setIdOpcaoEntrega(pedidoDTO.getIdOpcaoEntrega());
 			pedido.setFlgAtivo("S");
 			pedido.setPlataforma(PedidoService.PLATAFORMA_APP);
 
