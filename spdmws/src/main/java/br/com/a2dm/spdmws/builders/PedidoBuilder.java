@@ -49,6 +49,7 @@ public class PedidoBuilder {
 		pedidoDTO.setObservacao(pedido.getObsPedido());
 		pedidoDTO.setIdCliente(pedido.getIdCliente());
 		pedidoDTO.setIdPedido(pedido.getIdPedido());
+		pedidoDTO.setIdOpcaoEntrega(pedido.getIdOpcaoEntrega());
 		pedidoDTO.setIdUsuario(pedido.getIdUsuarioCad());
 		pedidoDTO.setUsuarioCadastro(UsuarioBuilder.buildUsuarioDTO(pedido.getUsuarioCad()));
 		pedidoDTO.setFlgAtivo(pedido.getFlgAtivo());
