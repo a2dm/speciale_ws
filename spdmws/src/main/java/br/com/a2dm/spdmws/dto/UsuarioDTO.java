@@ -6,6 +6,7 @@ public class UsuarioDTO {
 
 	private BigInteger idUsuario;
 	private BigInteger idCliente;
+	private BigInteger idTabelaPrecoOmie;
 	private String nome;
 	private String login;
 	private String email;
@@ -26,6 +27,14 @@ public class UsuarioDTO {
 
 	public void setIdCliente(BigInteger idCliente) {
 		this.idCliente = idCliente;
+	}
+	
+	public BigInteger getIdTabelaPrecoOmie() {
+		return idTabelaPrecoOmie;
+	}
+
+	public void setIdTabelaPrecoOmie(BigInteger idTabelaPrecoOmie) {
+		this.idTabelaPrecoOmie = idTabelaPrecoOmie;
 	}
 
 	public String getNome() {

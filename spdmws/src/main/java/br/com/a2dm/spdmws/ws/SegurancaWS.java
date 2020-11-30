@@ -22,6 +22,7 @@ import br.com.a2dm.spdmws.exception.ExceptionUtils;
 
 @Path("/seguranca")
 public class SegurancaWS {
+	
 	@POST
 	@Path("/login")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -37,6 +38,7 @@ public class SegurancaWS {
 			if (usuario == null) {
 				throw new ApiException(401, "Autenticação inválida");
 			}
+			
 			return UsuarioBuilder.buildUsuarioDTO(usuario);
 
 		} catch (Exception e) {
