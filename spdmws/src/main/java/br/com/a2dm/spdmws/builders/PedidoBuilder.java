@@ -43,7 +43,7 @@ public class PedidoBuilder {
 
 	}
 
-	public static PedidoDTO buildPedidoDTO(Pedido pedido) {
+	public static PedidoDTO buildPedidoDTO(Pedido pedido) throws Exception {
 		PedidoDTO pedidoDTO = new PedidoDTO();
 		pedidoDTO.setDataPedido(pedido.getDatPedido());
 		pedidoDTO.setObservacao(pedido.getObsPedido());

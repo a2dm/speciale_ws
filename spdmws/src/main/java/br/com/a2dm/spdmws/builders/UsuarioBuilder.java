@@ -8,6 +8,7 @@ import br.com.a2dm.spdmws.dto.UsuarioDTO;
 public class UsuarioBuilder {
 
 	public static UsuarioDTO buildUsuarioDTO(Usuario usuario) throws Exception {
+		
 		Cliente cliente = new Cliente();
 		cliente.setIdCliente(usuario.getIdCliente());
 		cliente = ClienteService.getInstancia().get(cliente, 0);
