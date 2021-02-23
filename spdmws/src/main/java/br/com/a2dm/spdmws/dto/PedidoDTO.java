@@ -13,6 +13,7 @@ public class PedidoDTO {
 	private Date dataPedido;
 	private String observacao;
 	private String flgAtivo;
+	private BigInteger idExternoOmie;
 	private List<ProdutoDTO> produtos;
 	private UsuarioDTO usuarioCadastro;
 
@@ -63,6 +64,14 @@ public class PedidoDTO {
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
 	}
+	
+	public BigInteger getIdExternoOmie() {
+		return idExternoOmie;
+	}
+	
+	public void setIdExternoOmie(BigInteger idExternoOmie) {
+		this.idExternoOmie = idExternoOmie;
+	}
 
 	public List<ProdutoDTO> getProdutos() {
 		return produtos;
@@ -86,5 +95,13 @@ public class PedidoDTO {
 
 	public void setIdOpcaoEntrega(BigInteger idOpcaoEntrega) {
 		this.idOpcaoEntrega = idOpcaoEntrega;
+	}
+	
+	public boolean isEntrega() {
+		return this.idOpcaoEntrega != null && this.idOpcaoEntrega.toString().equals("2");
+	}
+	
+	public boolean isRetirada() {
+		return this.idOpcaoEntrega != null && this.idOpcaoEntrega.toString().equals("1");
 	}
 }

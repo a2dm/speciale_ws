@@ -11,6 +11,7 @@ public class ProdutoDTO {
 	private BigInteger qtdMultiplo;
 	private BigInteger qtdSolicitada;
 	private String flgAtivo;
+	private Double valorUnitario;
 	
 	public BigInteger getIdPedidoProduto() {
 		return idPedidoProduto;
@@ -66,6 +67,14 @@ public class ProdutoDTO {
 
 	public void setFlgAtivo(String flgAtivo) {
 		this.flgAtivo = flgAtivo;
+	}
+	
+	public Double getValorUnitario() {
+		return valorUnitario;
+	}
+	
+	public void setValorUnitario(Double valorUnitario) {
+		this.valorUnitario = valorUnitario;
 	}
 
 }

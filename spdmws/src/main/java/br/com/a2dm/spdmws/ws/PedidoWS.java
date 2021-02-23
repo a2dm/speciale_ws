@@ -25,6 +25,7 @@ import br.com.a2dm.spdmws.dto.PedidoDTO;
 import br.com.a2dm.spdmws.dto.ProdutoDTO;
 import br.com.a2dm.spdmws.exception.ApiException;
 import br.com.a2dm.spdmws.exception.ExceptionUtils;
+import br.com.a2dm.spdmws.omie.service.OmiePedidoService;
 
 @Path("/pedidos")
 public class PedidoWS {
@@ -61,35 +62,38 @@ public class PedidoWS {
 	public PedidoDTO cadastrarPedido(PedidoDTO pedidoDTO) throws ApiException {
 		try {
 
-			Pedido pedido = new Pedido();
-			pedido.setIdCliente(pedidoDTO.getIdCliente());
-			pedido.setObsPedido(pedidoDTO.getObservacao());
-			pedido.setDatPedido(pedidoDTO.getDataPedido());
-			pedido.setIdOpcaoEntrega(pedidoDTO.getIdOpcaoEntrega());
-			pedido.setFlgAtivo("S");
-			pedido.setPlataforma(PedidoService.PLATAFORMA_APP);
-
-			List<ProdutoDTO> produtos = pedidoDTO.getProdutos();
-
-			if (produtos != null && !produtos.isEmpty()) {
-
-				pedido.setListaProduto(new ArrayList<>());
-
-				for (ProdutoDTO produtoDTO : produtos) {
-					Produto produto = new Produto();
-					produto.setIdProduto(produtoDTO.getIdProduto());
-					produto.setQtdSolicitada(produtoDTO.getQtdSolicitada());
-					pedido.getListaProduto().add(produto);
-				}
-			}
-
-			pedido.setIdPedido(null);
-			pedido.setDatCadastro(new Date());
-			pedido.setIdUsuarioCad(pedidoDTO.getIdUsuario());
-			Pedido pedidoInserido = PedidoService.getInstancia().inserir(pedido);
-			pedidoDTO.setIdPedido(pedidoInserido.getIdPedido());
-
-			return PedidoBuilder.buildPedidoDTOCompleto(pedidoInserido.getIdPedido());
+//			Pedido pedido = new Pedido();
+//			pedido.setIdCliente(pedidoDTO.getIdCliente());
+//			pedido.setObsPedido(pedidoDTO.getObservacao());
+//			pedido.setDatPedido(pedidoDTO.getDataPedido());
+//			pedido.setIdOpcaoEntrega(pedidoDTO.getIdOpcaoEntrega());
+//			pedido.setFlgAtivo("S");
+//			pedido.setPlataforma(PedidoService.PLATAFORMA_APP);
+//
+//			List<ProdutoDTO> produtos = pedidoDTO.getProdutos();
+//
+//			if (produtos != null && !produtos.isEmpty()) {
+//
+//				pedido.setListaProduto(new ArrayList<>());
+//
+//				for (ProdutoDTO produtoDTO : produtos) {
+//					Produto produto = new Produto();
+//					produto.setIdProduto(produtoDTO.getIdProduto());
+//					produto.setQtdSolicitada(produtoDTO.getQtdSolicitada());
+//					pedido.getListaProduto().add(produto);
+//				}
+//			}
+//
+//			pedido.setIdPedido(null);
+//			pedido.setDatCadastro(new Date());
+//			pedido.setIdUsuarioCad(pedidoDTO.getIdUsuario());
+//			Pedido pedidoInserido = PedidoService.getInstancia().inserir(pedido);
+//			pedidoDTO.setIdPedido(pedidoInserido.getIdPedido());
+//
+//			return PedidoBuilder.buildPedidoDTOCompleto(pedidoInserido.getIdPedido());
+			
+			return OmiePedidoService.getInstance().cadastrarPedido(pedidoDTO);
+			
 
 		} catch (Exception e) {
 			throw ExceptionUtils.handlerApiException(e);

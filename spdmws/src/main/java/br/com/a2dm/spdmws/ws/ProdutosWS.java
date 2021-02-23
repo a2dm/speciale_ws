@@ -1,8 +1,6 @@
 package br.com.a2dm.spdmws.ws;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -12,12 +10,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import br.com.a2dm.spdm.entity.ClienteProduto;
-import br.com.a2dm.spdm.entity.Produto;
 import br.com.a2dm.spdm.service.ClienteProdutoService;
-import br.com.a2dm.spdm.service.ProdutoService;
 import br.com.a2dm.spdmws.dto.ProdutoDTO;
 import br.com.a2dm.spdmws.exception.ApiException;
 import br.com.a2dm.spdmws.exception.ExceptionUtils;
+import br.com.a2dm.spdmws.omie.service.OmieProdutoService;
 
 @Path("/produtos")
 public class ProdutosWS {
@@ -58,31 +55,30 @@ public class ProdutosWS {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<ProdutoDTO> getListaProdutoByCliente(@PathParam("idCliente") BigInteger idCliente) throws ApiException
 	{
-		List<ProdutoDTO> listaProdutoCliente = new ArrayList<>();
-		
 		try
 		{
-			Produto produto = new Produto();
-			produto.setFlgAtivo("S");
-			produto.setFiltroMap(new HashMap<String, Object>());
-			produto.getFiltroMap().put("flgAtivoClienteProduto", "S");
-			produto.getFiltroMap().put("idCliente", idCliente);
-			
-			List<Produto> list = ProdutoService.getInstancia().pesquisar(produto, ProdutoService.JOIN_CLIENTE_PRODUTO);
-			
-			if (list != null && list.size() > 0) {
-				for (Produto element : list) {
-					ProdutoDTO produtoCliente = new ProdutoDTO();
-					produtoCliente.setIdProduto(element.getIdProduto());
-					produtoCliente.setDesProduto(element.getDesProduto());
-					produtoCliente.setQtdLoteMinimo(element.getQtdLoteMinimo());
-					produtoCliente.setQtdMultiplo(element.getQtdMultiplo());
-					produtoCliente.setFlgAtivo("S");
-					listaProdutoCliente.add(produtoCliente);
-				}
-			}
-
-			return listaProdutoCliente;
+//			List<ProdutoDTO> listaProdutoCliente = new ArrayList<ProdutoDTO>();
+//			Produto produto = new Produto();
+//			produto.setFlgAtivo("S");
+//			produto.setFiltroMap(new HashMap<String, Object>());
+//			produto.getFiltroMap().put("flgAtivoClienteProduto", "S");
+//			produto.getFiltroMap().put("idCliente", idCliente);
+//			
+//			List<Produto> list = ProdutoService.getInstancia().pesquisar(produto, ProdutoService.JOIN_CLIENTE_PRODUTO);
+//			
+//			if (list != null && list.size() > 0) {
+//				for (Produto element : list) {
+//					ProdutoDTO produtoCliente = new ProdutoDTO();
+//					produtoCliente.setIdProduto(element.getIdProduto());
+//					produtoCliente.setDesProduto(element.getDesProduto());
+//					produtoCliente.setQtdLoteMinimo(element.getQtdLoteMinimo());
+//					produtoCliente.setQtdMultiplo(element.getQtdMultiplo());
+//					produtoCliente.setFlgAtivo("S");
+//					listaProdutoCliente.add(produtoCliente);
+//				}
+//			}
+//			return listaProdutoCliente;
+			return OmieProdutoService.getInstance().listarProdutosPorCliente(idCliente);
 		} catch (Exception e) {
 			throw ExceptionUtils.handlerApiException(e);
 		}
