@@ -16,7 +16,7 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException>{
 		return Response
 				.status(e.getStatusCode())
 				.type(MediaType.APPLICATION_JSON)
-				.entity(e.toJson())
+				.entity(ExceptionUtils.toJson(e))
 				.build();
 	}
 	

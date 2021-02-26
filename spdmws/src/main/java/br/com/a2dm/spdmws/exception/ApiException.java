@@ -1,8 +1,5 @@
 package br.com.a2dm.spdmws.exception;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
 public class ApiException extends Exception {
 
 	private static final long serialVersionUID = 4583551151614451118L;
@@ -26,15 +23,6 @@ public class ApiException extends Exception {
 		return statusCode;
 	}
 	
-	public JSONObject toJson(){
-		try {
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("statusCode", getStatusCode());
-			jsonObject.put("message", getMessage());
-			return jsonObject;		
-		} catch (JSONException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	
 
 }

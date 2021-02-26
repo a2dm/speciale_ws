@@ -15,8 +15,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.time.DateUtils;
-
 import br.com.a2dm.spdm.entity.Pedido;
 import br.com.a2dm.spdm.entity.Produto;
 import br.com.a2dm.spdm.service.PedidoService;
@@ -34,22 +32,10 @@ public class PedidoWS {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public PedidoDTO getPedido(@QueryParam("idCliente") BigInteger idCliente,
-			@QueryParam("dataPedido") String dataPedido) throws ApiException {
+							   @QueryParam("idPedido") BigInteger idPedido,
+							   @QueryParam("dataPedido") String dataPedido) throws ApiException {
 		try {
-
-			Date dataPedidoReferencia = DateUtils.parseDate(dataPedido, new String[] { "yyyy-MM-dd" });
-
-			Pedido pedido = new Pedido();
-			pedido.setIdCliente(idCliente);
-			pedido.setDatPedido(dataPedidoReferencia);
-			pedido.setFlgAtivo("S");
-			pedido = PedidoService.getInstancia().get(pedido, 1);
-
-			if (pedido == null) {
-				throw new ApiException(404, "Nenhum pedido encontrado com esses parametros");
-			}
-
-			return PedidoBuilder.buildPedidoDTOCompleto(pedido);
+			return OmiePedidoService.getInstance().pesquisarPedido(idCliente, idPedido, dataPedido);
 		} catch (Exception e) {
 			throw ExceptionUtils.handlerApiException(e);
 		}
@@ -61,40 +47,7 @@ public class PedidoWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public PedidoDTO cadastrarPedido(PedidoDTO pedidoDTO) throws ApiException {
 		try {
-
-//			Pedido pedido = new Pedido();
-//			pedido.setIdCliente(pedidoDTO.getIdCliente());
-//			pedido.setObsPedido(pedidoDTO.getObservacao());
-//			pedido.setDatPedido(pedidoDTO.getDataPedido());
-//			pedido.setIdOpcaoEntrega(pedidoDTO.getIdOpcaoEntrega());
-//			pedido.setFlgAtivo("S");
-//			pedido.setPlataforma(PedidoService.PLATAFORMA_APP);
-//
-//			List<ProdutoDTO> produtos = pedidoDTO.getProdutos();
-//
-//			if (produtos != null && !produtos.isEmpty()) {
-//
-//				pedido.setListaProduto(new ArrayList<>());
-//
-//				for (ProdutoDTO produtoDTO : produtos) {
-//					Produto produto = new Produto();
-//					produto.setIdProduto(produtoDTO.getIdProduto());
-//					produto.setQtdSolicitada(produtoDTO.getQtdSolicitada());
-//					pedido.getListaProduto().add(produto);
-//				}
-//			}
-//
-//			pedido.setIdPedido(null);
-//			pedido.setDatCadastro(new Date());
-//			pedido.setIdUsuarioCad(pedidoDTO.getIdUsuario());
-//			Pedido pedidoInserido = PedidoService.getInstancia().inserir(pedido);
-//			pedidoDTO.setIdPedido(pedidoInserido.getIdPedido());
-//
-//			return PedidoBuilder.buildPedidoDTOCompleto(pedidoInserido.getIdPedido());
-			
 			return OmiePedidoService.getInstance().cadastrarPedido(pedidoDTO);
-			
-
 		} catch (Exception e) {
 			throw ExceptionUtils.handlerApiException(e);
 		}
