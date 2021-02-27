@@ -34,4 +34,20 @@ public class OmiePedidoService {
 			throw new OmieServiceException(e);
 		}
 	}
+	
+	public PedidoDTO alterarPedido(PedidoDTO pedidoDTO) throws OmieServiceException {
+		try {
+			return OmiePedidoRepository.getInstance().alterarPedidoCliente(pedidoDTO);
+		} catch (Exception e) {
+			throw new OmieServiceException(e);
+		}
+	}
+	
+	public void inativarPedido(BigInteger idCliente, PedidoDTO pedidoDTO) throws OmieServiceException {
+		try {
+			OmiePedidoRepository.getInstance().inativarPedido(pedidoDTO.getCodigoPedidoIntegracao(), pedidoDTO.getCodigoPedido());
+		} catch (Exception e) {
+			throw new OmieServiceException(e);
+		}
+	}
 }

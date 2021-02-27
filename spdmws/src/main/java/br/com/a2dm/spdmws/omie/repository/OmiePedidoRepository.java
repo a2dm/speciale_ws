@@ -10,6 +10,7 @@ import br.com.a2dm.spdmws.api.ApiClientResponse;
 import br.com.a2dm.spdmws.dto.PedidoDTO;
 import br.com.a2dm.spdmws.omie.api.OmieApiClient;
 import br.com.a2dm.spdmws.omie.builder.OmiePedidoBuilder;
+import br.com.a2dm.spdmws.omie.payload.InativarPayloadPedido;
 import br.com.a2dm.spdmws.omie.payload.PedidoPayload;
 import br.com.a2dm.spdmws.omie.payload.PesquisarPayloadPedido;
 import br.com.a2dm.spdmws.utils.JsonUtils;
@@ -44,7 +45,7 @@ public class OmiePedidoRepository {
 			PesquisarPayloadPedido pesquisarPedidoOmie = new OmiePedidoBuilder().buildPesquisarPedido(idExternoOmie, idPedido, dataPedido);
 			OmieApiClient apiClient = new OmieApiClient();
 			ApiClientResponse response = apiClient.post("/produtos/pedido/", "ListarPedidos", pesquisarPedidoOmie);
-			return new OmiePedidoBuilder().buildPesquisarPedidoResponse(response.getBody(),idCliente);
+			return new OmiePedidoBuilder().buildPesquisarPedidoResponse(response.getBody(), idCliente);
 		} catch (Exception e) {
 			throw new OmieRepositoryException(e);
 		}
@@ -75,5 +76,40 @@ public class OmiePedidoRepository {
 			throw new OmieRepositoryException(String.format("Erro ao cadastrar pedido para cliente %d", pedidoDTO.getIdCliente()), e);
 		}
 	}
-
+	
+	public PedidoDTO alterarPedidoCliente(PedidoDTO pedidoDTO) throws OmieRepositoryException {
+		try {
+			Cliente cliente = new Cliente();
+			cliente.setIdCliente(pedidoDTO.getIdCliente());
+			cliente = ClienteService.getInstancia().get(cliente, 0);
+			pedidoDTO.setIdExternoOmie(cliente.getIdExternoOmie());
+			return this.alterarPedido(pedidoDTO);
+		} catch (Exception e) {
+			throw new OmieRepositoryException(String.format("Erro ao alterar pedido para cliente %d", pedidoDTO.getIdCliente()), e);
+		}
+	}
+	
+	protected PedidoDTO alterarPedido(PedidoDTO pedidoDTO) throws OmieRepositoryException {
+		try {
+			PedidoPayload pedidoOmie = new OmiePedidoBuilder().buildPedido(pedidoDTO);
+			OmieApiClient apiClient = new OmieApiClient();
+			ApiClientResponse response = apiClient.post("/produtos/pedido/", "AlterarPedidoVenda", pedidoOmie);
+			JSONObject json = JsonUtils.parse(response.getBody());
+			BigInteger numeroPedido = new BigInteger(json.getString("numero_pedido"));
+			pedidoDTO.setIdPedido(numeroPedido);
+			return pedidoDTO;
+		} catch (Exception e) {
+			throw new OmieRepositoryException(String.format("Erro ao alterar pedido para cliente %d", pedidoDTO.getIdCliente()), e);
+		}
+	}
+	
+	public void inativarPedido(BigInteger codigoPedidoIntegracao, BigInteger codigoPedido) throws OmieRepositoryException {
+		try {
+			InativarPayloadPedido inativarPedidoOmie = new OmiePedidoBuilder().buildInativarPedido(codigoPedidoIntegracao, codigoPedido);
+			OmieApiClient apiClient = new OmieApiClient();
+			apiClient.post("/produtos/pedidovendafat/", "CancelarPedidoVenda", inativarPedidoOmie);
+		} catch (Exception e) {
+			throw new OmieRepositoryException(e);
+		}
+	}
 }

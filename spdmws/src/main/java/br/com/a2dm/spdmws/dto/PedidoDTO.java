@@ -9,6 +9,8 @@ public class PedidoDTO {
 	private BigInteger idCliente;
 	private BigInteger idUsuario;
 	private BigInteger idPedido;
+	private BigInteger codigoPedidoIntegracao;
+	private BigInteger codigoPedido;
 	private BigInteger idOpcaoEntrega;
 	private Date dataPedido;
 	private String observacao;
@@ -35,6 +37,22 @@ public class PedidoDTO {
 
 	public BigInteger getIdPedido() {
 		return idPedido;
+	}
+	
+	public BigInteger getCodigoPedidoIntegracao() {
+		return codigoPedidoIntegracao;
+	}
+
+	public void setCodigoPedidoIntegracao(BigInteger codigoPedidoIntegracao) {
+		this.codigoPedidoIntegracao = codigoPedidoIntegracao;
+	}
+
+	public BigInteger getCodigoPedido() {
+		return codigoPedido;
+	}
+
+	public void setCodigoPedido(BigInteger codigoPedido) {
+		this.codigoPedido = codigoPedido;
 	}
 
 	public void setIdPedido(BigInteger idPedido) {
@@ -95,13 +113,5 @@ public class PedidoDTO {
 
 	public void setIdOpcaoEntrega(BigInteger idOpcaoEntrega) {
 		this.idOpcaoEntrega = idOpcaoEntrega;
-	}
-	
-	public boolean isEntrega() {
-		return this.idOpcaoEntrega != null && this.idOpcaoEntrega.toString().equals("2");
-	}
-	
-	public boolean isRetirada() {
-		return this.idOpcaoEntrega != null && this.idOpcaoEntrega.toString().equals("1");
 	}
 }

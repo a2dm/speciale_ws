@@ -1,9 +1,6 @@
 package br.com.a2dm.spdmws.ws;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -15,12 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import br.com.a2dm.spdm.entity.Pedido;
-import br.com.a2dm.spdm.entity.Produto;
-import br.com.a2dm.spdm.service.PedidoService;
-import br.com.a2dm.spdmws.builders.PedidoBuilder;
 import br.com.a2dm.spdmws.dto.PedidoDTO;
-import br.com.a2dm.spdmws.dto.ProdutoDTO;
 import br.com.a2dm.spdmws.exception.ApiException;
 import br.com.a2dm.spdmws.exception.ExceptionUtils;
 import br.com.a2dm.spdmws.omie.service.OmiePedidoService;
@@ -59,44 +51,7 @@ public class PedidoWS {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public PedidoDTO atualizarPedido(@PathParam("idPedido") BigInteger idPedido, PedidoDTO pedidoDTO) throws ApiException {
 		try {
-
-			if (idPedido == null || !(idPedido.longValue() > 0)) {
-				throw new ApiException(400, "Identificação do pedido é obrigatório");
-			}else {
-				pedidoDTO.setIdPedido(idPedido);
-			}
-
-			Pedido pedido = new Pedido();
-			pedido.setIdCliente(pedidoDTO.getIdCliente());
-			pedido.setObsPedido(pedidoDTO.getObservacao());
-			pedido.setDatPedido(pedidoDTO.getDataPedido());
-			pedido.setIdOpcaoEntrega(pedidoDTO.getIdOpcaoEntrega());
-			pedido.setFlgAtivo("S");
-			pedido.setPlataforma(PedidoService.PLATAFORMA_APP);
-
-			List<ProdutoDTO> produtos = pedidoDTO.getProdutos();
-
-			if (produtos != null && !produtos.isEmpty()) {
-
-				pedido.setListaProduto(new ArrayList<>());
-
-				for (ProdutoDTO produtoDTO : produtos) {
-					Produto produto = new Produto();
-					produto.setIdProduto(produtoDTO.getIdProduto());
-					produto.setQtdSolicitada(produtoDTO.getQtdSolicitada());
-					produto.setFlgAtivo(produtoDTO.getFlgAtivo());
-					pedido.getListaProduto().add(produto);
-				}
-			}
-
-			pedido.setIdPedido(pedidoDTO.getIdPedido());
-			pedido.setDatAlteracao(new Date());
-			pedido.setIdUsuarioAlt(pedidoDTO.getIdUsuario());
-			Pedido pedidoAlterado = PedidoService.getInstancia().alterar(pedido);
-			pedidoDTO.setIdPedido(pedidoAlterado.getIdPedido());
-
-			return PedidoBuilder.buildPedidoDTOCompleto(pedidoDTO.getIdPedido());
-
+			return OmiePedidoService.getInstance().alterarPedido(pedidoDTO);
 		} catch (Exception e) {
 			throw ExceptionUtils.handlerApiException(e);
 		}
@@ -106,18 +61,12 @@ public class PedidoWS {
 	@Path("/{id}/inativar")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public PedidoDTO inativarPedido(@PathParam("id") BigInteger id, PedidoDTO pedidoDTO) throws ApiException {
+	public void inativarPedido(@PathParam("id") BigInteger id, PedidoDTO pedidoDTO) throws ApiException {
 		try {
-			Pedido pedido = new Pedido();
-			pedido.setIdPedido(id);
-			pedido.setIdUsuarioAlt(pedidoDTO.getIdUsuario());
-			pedido.setIdCliente(pedidoDTO.getIdCliente());
-
-			pedido = PedidoService.getInstancia().inativar(pedido);
-
-			return pedidoDTO;
+			OmiePedidoService.getInstance().inativarPedido(id, pedidoDTO);
 		} catch (Exception e) {
 			throw ExceptionUtils.handlerApiException(e);
 		}
 	}
 }
+

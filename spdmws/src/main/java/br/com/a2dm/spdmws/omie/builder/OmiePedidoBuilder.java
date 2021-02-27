@@ -17,9 +17,11 @@ import br.com.a2dm.spdmws.dto.PedidoDTO;
 import br.com.a2dm.spdmws.dto.ProdutoDTO;
 import br.com.a2dm.spdmws.omie.domain.OmieCaracteristicaProduto;
 import br.com.a2dm.spdmws.omie.payload.CabecalhoPayload;
+import br.com.a2dm.spdmws.omie.payload.ConsultarPayload;
 import br.com.a2dm.spdmws.omie.payload.DetPayload;
 import br.com.a2dm.spdmws.omie.payload.FretePayload;
 import br.com.a2dm.spdmws.omie.payload.IdePayload;
+import br.com.a2dm.spdmws.omie.payload.InativarPayloadPedido;
 import br.com.a2dm.spdmws.omie.payload.InformacoesAdicionaisPayload;
 import br.com.a2dm.spdmws.omie.payload.ObservacoesPayload;
 import br.com.a2dm.spdmws.omie.payload.PedidoPayload;
@@ -47,7 +49,7 @@ public class OmiePedidoBuilder {
 			throw new OmieBuilderException("Erro ao montar json para Pesquisar Pedido", e);
 		}
 	}
-	
+
 	public PedidoDTO buildPesquisarPedidoResponse(String json, BigInteger idCliente) {
 		try {
 			PedidoDTO pedidoDTO = new PedidoDTO();
@@ -59,9 +61,10 @@ public class OmiePedidoBuilder {
 				JSONObject cabecalho = (JSONObject) pedidoJson.get("cabecalho");
 				JSONObject observacoes = (JSONObject) pedidoJson.get("observacoes");
 				JSONObject frete = (JSONObject) pedidoJson.get("frete");
+				JSONObject infoCadastro = (JSONObject) pedidoJson.get("infoCadastro");
 				JSONArray detalhes = (JSONArray) pedidoJson.getJSONArray("det");
 				
-				pedidoDTO = this.buildPedidoDTO(cabecalho, observacoes, frete, idCliente);
+				pedidoDTO = this.buildPedidoDTO(cabecalho, observacoes, frete, infoCadastro, idCliente);
 
 				for (int j = 0; j < detalhes.length(); j++) {
 					JSONObject detalheJson = (JSONObject) detalhes.get(j);
@@ -76,14 +79,32 @@ public class OmiePedidoBuilder {
 		}
 	}
 	
-	public PedidoDTO buildPedidoDTO(JSONObject cabecalho, JSONObject observacao, JSONObject frete, BigInteger idCliente) throws Exception {
+	public ConsultarPayload buildConsultarPedido(BigInteger idPedido) throws OmieBuilderException {
+		try {
+			return new ConsultarPayload(idPedido);
+		} catch (Exception e) {
+			throw new OmieBuilderException("Erro ao montar json para Consultar Pedido", e);
+		}
+	}
+	
+	public InativarPayloadPedido buildInativarPedido(BigInteger codigoPedidoIntegracao, BigInteger codigoPedido) throws OmieBuilderException {
+		try {
+			return new InativarPayloadPedido(codigoPedidoIntegracao, codigoPedido);
+		} catch (Exception e) {
+			throw new OmieBuilderException("Erro ao montar json para Inativar Pedido", e);
+		}
+	}
+	
+	public PedidoDTO buildPedidoDTO(JSONObject cabecalho, JSONObject observacao, JSONObject frete, JSONObject infoCadastro, BigInteger idCliente) throws Exception {
 		PedidoDTO pedidoDTO = new PedidoDTO();
 		pedidoDTO.setDataPedido(DateUtils.parseDatePtBr(cabecalho.getString("data_previsao")));
 		pedidoDTO.setObservacao(observacao.getString("obs_venda"));
 		pedidoDTO.setIdCliente(idCliente);
 		pedidoDTO.setIdPedido(new BigInteger(cabecalho.getString("numero_pedido")));
+		pedidoDTO.setCodigoPedido(new BigInteger(cabecalho.getString("codigo_pedido")));
+		pedidoDTO.setCodigoPedidoIntegracao(new BigInteger(cabecalho.getString("codigo_pedido_integracao")));
 		pedidoDTO.setIdOpcaoEntrega(new BigInteger(frete.getInt("modalidade") == 1 ? "2" : "1"));
-		pedidoDTO.setFlgAtivo("S");
+		pedidoDTO.setFlgAtivo(infoCadastro.getString("cancelado").equalsIgnoreCase("N") ? "S" : "N");
 		pedidoDTO.setProdutos(new ArrayList<>());
 		return pedidoDTO;
 	}
@@ -93,6 +114,7 @@ public class OmiePedidoBuilder {
 		produtoDTO.setDesProduto(produto.getString("descricao"));
 		produtoDTO.setIdProduto(new BigInteger(produto.getString("codigo_produto")));
 		produtoDTO.setQtdSolicitada(new BigInteger(produto.getString("quantidade")));
+		produtoDTO.setValorUnitario(produto.getDouble("valor_unitario"));
 		
 		Map<String, OmieCaracteristicaProduto> caracteristicas = null;
 		caracteristicas = OmieProdutosRepository.getInstance().obterCaracteristicasProduto(produtoDTO.getIdProduto());
@@ -124,7 +146,7 @@ public class OmiePedidoBuilder {
 	}
 
 	protected CabecalhoPayload buildCabecalhoPedido(PedidoDTO pedidoDTO) throws JSONException {
-		return new CabecalhoPayload(createCodPedidoIntegracao(pedidoDTO),
+		return new CabecalhoPayload(pedidoDTO.getCodigoPedidoIntegracao() == null ? createCodPedidoIntegracao(pedidoDTO) : pedidoDTO.getCodigoPedidoIntegracao().longValue(),
 									pedidoDTO.getIdExternoOmie(),
 									DateUtils.formatDatePtBr(pedidoDTO.getDataPedido()),
 									"10",
@@ -147,7 +169,7 @@ public class OmiePedidoBuilder {
 	}
 	
 	protected DetPayload buildProdutoPedido(ProdutoDTO produtoDTO) throws JSONException {
-		IdePayload ide = new IdePayload(produtoDTO.getIdProduto());
+		IdePayload ide = new IdePayload(produtoDTO.getIdProduto(), buildAcaoItem(produtoDTO));
 		
 		ProdutoPayload produto = new ProdutoPayload("5.401",
 													"1905.20.90",
@@ -159,6 +181,16 @@ public class OmiePedidoBuilder {
 													"0",
 													produtoDTO.getValorUnitario());
 		return new DetPayload(ide, produto);
+	}
+
+	private String buildAcaoItem(ProdutoDTO produtoDTO) {
+		String acaoItem = "";
+		if (produtoDTO.getFlgAtivo() != null 
+				&& !produtoDTO.getFlgAtivo().equalsIgnoreCase("")
+				&& produtoDTO.getFlgAtivo().equalsIgnoreCase("N")) {
+			acaoItem = "E";
+		}
+		return acaoItem;
 	}
 	
 	protected FretePayload buildFretePedido(PedidoDTO pedidoDTO) throws JSONException {
@@ -174,6 +206,10 @@ public class OmiePedidoBuilder {
 	}
 	
 	protected String getOpcaoFrete(PedidoDTO pedidoDTO) {
-		return pedidoDTO.isRetirada() ? "9" : "1";
+		return this.isRetirada(pedidoDTO) ? "9" : "1";
+	}
+	
+	protected boolean isRetirada(PedidoDTO pedidoDTO) {
+		return pedidoDTO.getIdOpcaoEntrega().toString().equals("1");
 	}
 }
