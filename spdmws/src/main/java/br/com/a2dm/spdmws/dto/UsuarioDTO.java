@@ -6,7 +6,9 @@ public class UsuarioDTO {
 
 	private BigInteger idUsuario;
 	private BigInteger idCliente;
+	private BigInteger idGrupo;
 	private BigInteger idTabelaPrecoOmie;
+	private BigInteger idExternoOmie;
 	private String nome;
 	private String login;
 	private String email;
@@ -24,6 +26,14 @@ public class UsuarioDTO {
 	public BigInteger getIdCliente() {
 		return idCliente;
 	}
+	
+	public BigInteger getIdGrupo() {
+		return idGrupo;
+	}
+
+	public void setIdGrupo(BigInteger idGrupo) {
+		this.idGrupo = idGrupo;
+	}
 
 	public void setIdCliente(BigInteger idCliente) {
 		this.idCliente = idCliente;
@@ -35,6 +45,14 @@ public class UsuarioDTO {
 
 	public void setIdTabelaPrecoOmie(BigInteger idTabelaPrecoOmie) {
 		this.idTabelaPrecoOmie = idTabelaPrecoOmie;
+	}
+	
+	public BigInteger getIdExternoOmie() {
+		return idExternoOmie;
+	}
+
+	public void setIdExternoOmie(BigInteger idExternoOmie) {
+		this.idExternoOmie = idExternoOmie;
 	}
 
 	public String getNome() {

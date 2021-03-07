@@ -10,14 +10,19 @@ public class UsuarioBuilder {
 	public static UsuarioDTO buildUsuarioDTO(Usuario usuario) throws Exception {
 		
 		Cliente cliente = new Cliente();
-		cliente.setIdCliente(usuario.getIdCliente());
-		cliente = ClienteService.getInstancia().get(cliente, 0);
+		
+		if (usuario.getIdCliente() != null) {
+			cliente.setIdCliente(usuario.getIdCliente());
+			cliente = ClienteService.getInstancia().get(cliente, 0);
+		}
 		
 		UsuarioDTO usuarioDTO = new UsuarioDTO();
 		usuarioDTO.setCpf(usuario.getCpf());
 		usuarioDTO.setEmail(usuario.getEmail());
 		usuarioDTO.setIdCliente(usuario.getIdCliente());
+		usuarioDTO.setIdGrupo(usuario.getIdGrupo());
 		usuarioDTO.setIdTabelaPrecoOmie(cliente.getIdTabelaPrecoOmie());
+		usuarioDTO.setIdExternoOmie(cliente.getIdExternoOmie());
 		usuarioDTO.setLogin(usuario.getLogin());
 		usuarioDTO.setNome(usuario.getNome());
 		usuarioDTO.setTelefone(usuario.getTelefone());
