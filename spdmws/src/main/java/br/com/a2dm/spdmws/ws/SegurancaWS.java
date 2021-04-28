@@ -9,16 +9,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import br.com.a2dm.brcmn.dto.AlteraSenhaDTO;
+import br.com.a2dm.brcmn.dto.LoginDTO;
+import br.com.a2dm.brcmn.dto.UsuarioDTO;
 import br.com.a2dm.brcmn.entity.Usuario;
 import br.com.a2dm.brcmn.service.RecuperarSenhaService;
 import br.com.a2dm.brcmn.service.UsuarioService;
 import br.com.a2dm.brcmn.util.criptografia.CriptoMD5;
-import br.com.a2dm.spdmws.builders.UsuarioBuilder;
-import br.com.a2dm.spdmws.dto.AlteraSenhaDTO;
-import br.com.a2dm.spdmws.dto.LoginDTO;
-import br.com.a2dm.spdmws.dto.UsuarioDTO;
-import br.com.a2dm.spdmws.exception.ApiException;
-import br.com.a2dm.spdmws.exception.ExceptionUtils;
+import br.com.a2dm.spdm.builders.UsuarioBuilder;
+import br.com.a2dm.spdm.exception.ApiException;
+import br.com.a2dm.spdm.exception.ExceptionUtils;
 
 @Path("/seguranca")
 public class SegurancaWS {

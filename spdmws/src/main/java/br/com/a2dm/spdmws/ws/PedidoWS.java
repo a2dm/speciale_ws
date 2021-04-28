@@ -12,10 +12,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import br.com.a2dm.spdmws.dto.PedidoDTO;
-import br.com.a2dm.spdmws.exception.ApiException;
-import br.com.a2dm.spdmws.exception.ExceptionUtils;
-import br.com.a2dm.spdmws.omie.service.OmiePedidoService;
+import br.com.a2dm.brcmn.dto.PedidoDTO;
+import br.com.a2dm.spdm.exception.ApiException;
+import br.com.a2dm.spdm.exception.ExceptionUtils;
+import br.com.a2dm.spdm.omie.service.OmiePedidoService;
 
 @Path("/pedidos")
 public class PedidoWS {

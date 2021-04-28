@@ -4,11 +4,11 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 
-import br.com.a2dm.spdmws.api.ApiClientResponse;
-import br.com.a2dm.spdmws.omie.api.OmieApiClient;
-import br.com.a2dm.spdmws.omie.domain.OmieProduto;
-import br.com.a2dm.spdmws.omie.domain.OmieTabelaPreco;
-import br.com.a2dm.spdmws.utils.JsonUtils;
+import br.com.a2dm.brcmn.domain.OmieProduto;
+import br.com.a2dm.brcmn.domain.OmieTabelaPreco;
+import br.com.a2dm.spdm.api.ApiClientResponse;
+import br.com.a2dm.spdm.omie.api.OmieApiClient;
+import br.com.a2dm.spdm.utils.JsonUtils;
 
 public class IntegracaoOmieApiTest {
 

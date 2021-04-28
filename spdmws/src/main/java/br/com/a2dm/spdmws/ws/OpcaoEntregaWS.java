@@ -11,10 +11,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import br.com.a2dm.spdm.entity.OpcaoEntrega;
+import br.com.a2dm.spdm.exception.ApiException;
+import br.com.a2dm.spdm.exception.ExceptionUtils;
 import br.com.a2dm.spdm.service.OpcaoEntregaService;
 import br.com.a2dm.spdm.service.PedidoService;
-import br.com.a2dm.spdmws.exception.ApiException;
-import br.com.a2dm.spdmws.exception.ExceptionUtils;
 
 @Path("/opcoesEntregas")
 public class OpcaoEntregaWS {
