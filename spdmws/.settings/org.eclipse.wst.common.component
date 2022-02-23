@@ -7,7 +7,7 @@
     
     
     
-    <wb-module deploy-name="spdmws-0.0.1-SNAPSHOT">
+    <wb-module deploy-name="spdmws-0.0.2-SNAPSHOT">
                                                                         
         
         
@@ -53,10 +53,10 @@
         
         
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
-        <dependent-module archiveName="spdm-service-0.0.2-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/speciale-service/speciale-service">
+        <dependent-module archiveName="spdm-service-0.0.4-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/speciale-service/speciale-service">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="brcmn-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/brcmn/brcmn">
+        <dependent-module archiveName="brcmn-1.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/brcmn/brcmn">
             <dependency-type>uses</dependency-type>
         </dependent-module>
                                                                         

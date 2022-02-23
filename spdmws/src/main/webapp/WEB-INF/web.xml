@@ -12,7 +12,7 @@
 			<param-name>com.sun.jersey.config.property.packages</param-name>
 			<param-value>
 				br.com.a2dm.spdmws.ws,
-				br.com.a2dm.spdmws.exception,
+				br.com.a2dm.spdm.exception,
 				br.com.a2dm.spdmws.filters
 			</param-value>
 		</init-param>

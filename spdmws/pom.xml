@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>spdmws</groupId>
 	<artifactId>spdmws</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<properties>
@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>spdm-service</groupId>
 			<artifactId>spdm-service</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.security</groupId>

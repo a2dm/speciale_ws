@@ -32,6 +32,17 @@ public class ClientesWS {
 		}
 	}
 	
+	@GET
+	@Path("/omie")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<String> pesquisarClientesOMIE(List<String> clientes) throws ApiException {
+		try {
+			return OmieClienteService.getInstance().pesquisarClientesList(clientes);
+		} catch (Exception e) {
+			throw ExceptionUtils.handlerApiException(e);
+		}
+	}
+	
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
