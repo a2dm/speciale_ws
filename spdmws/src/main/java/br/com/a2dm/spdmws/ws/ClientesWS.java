@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import br.com.a2dm.brcmn.dto.ClienteDTO;
+import br.com.a2dm.brcmn.dto.ClienteIntegracaoDTO;
 import br.com.a2dm.spdm.exception.ApiException;
 import br.com.a2dm.spdm.exception.ExceptionUtils;
 import br.com.a2dm.spdm.omie.payload.ClienteWebhookPayload;
@@ -20,6 +21,17 @@ import br.com.a2dm.spdm.omie.service.OmieClienteService;
 
 @Path("/clientes")
 public class ClientesWS {
+	
+	@GET
+	@Path("/idExternoOmie/{idExternoOmie}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ClienteIntegracaoDTO pesquisarCliente(@PathParam("idExternoOmie") BigInteger idExternoOmie) throws ApiException {
+		try {
+			return OmieClienteService.getInstance().pesquisarCliente(idExternoOmie);
+		} catch (Exception e) {
+			throw ExceptionUtils.handlerApiException(e);
+		}
+	}
 
 	@GET
 	@Path("/{nomeCliente}")
